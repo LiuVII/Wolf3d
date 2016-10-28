@@ -39,6 +39,8 @@
 # define KEY_MINUS 78
 # define KEY_E 14
 # define KEY_I 34
+# define KEY_C 8
+# define KEY_SPACE 49
 # define SIGN(x) ((x < 0.0) ? -1.0 : 1.0)
 # define ABS(x) ((x) * SIGN(x))
 
@@ -66,23 +68,20 @@ typedef struct	s_data
 {
 	t_3d		plrc;
 	t_2d		vwan;
-	int			iter;
 	t_3d		***img;
 	t_3d		img_size;
 	void		*mlx;
 	void		*win;
 	void		*img_p;
 	char		*img_p0;
-	t_3d		o1;
 	double		phi;
 	double		teta;
 	double		min_dist;
-	t_3d		scale;
+	double		jump_v;
 	t_2d		oz;
 	int			param;
 	int			bpp;
 	int			ls;
-	int			clr;
 	int			endian;
 	int			mevent;
 }				t_data;

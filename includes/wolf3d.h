@@ -17,9 +17,12 @@
 # define FOV (M_PI / 3.0)
 # define GR_S 160
 # define PP_DST (XS / 2.0 / tan(FOV / 2.0))  
-# define ANI (FOV / (double)XS)
+# define ANIX (FOV / (double)XS)
+# define ANIY (FOV / (double)YS)
 # define PP_CX (XS / 2)
 # define PP_CY (YS / 2)
 # define PP_SCL sqrt(XS * XS + YS * YS)
+# define GRAV_C 1
+# define JUMP_IMP sqrt(GRAV_C * YS / 2.0)
 
 #endif

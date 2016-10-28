@@ -14,6 +14,8 @@
 
 int	ft_key_hook(int keycode, t_data *d)
 {
+	static int sit;
+
 	(keycode == KEY_ESC) ? ft_free_n_exit(d, NULL, NULL, 0) : 0;
 	(keycode == KEY_UP) ? d->plrc.y -= 10.0 * sin(d->vwan.y) : 0;
 	(keycode == KEY_UP) ? d->plrc.x += 10.0 * cos(d->vwan.y) : 0;
@@ -27,10 +29,18 @@ int	ft_key_hook(int keycode, t_data *d)
 	(keycode == KEY_1) ? d->phi -= 0.05 : 0;
 	(keycode == KEY_5) ? d->teta -= 0.05 : 0;
 	(keycode == KEY_2) ? d->teta += 0.05 : 0;
-	(keycode == KEY_7) ? d->clr += 5 : 0;
-	(keycode == KEY_8) ? d->clr -= 5 : 0;
-	(keycode == KEY_PLUS) ? d->iter++ : 0;
-	(keycode == KEY_MINUS) ? d->iter-- : 0;
+	if (keycode == KEY_C)
+	{
+		if (sit == 0 && ++sit)
+			d->plrc.z += (3 * YS) / 8;
+		else if (sit == 1 && sit--)
+			d->plrc.z -= (3 * YS) / 8;		 
+	}
+	if (keycode == KEY_SPACE && d->plrc.z >= (YS) / 2) 
+	{
+		d->jump_v += JUMP_IMP;
+		d->param = 1;
+	}
 	if (keycode == KEY_E)
 	{
 		d->phi = 0;
@@ -41,6 +51,7 @@ int	ft_key_hook(int keycode, t_data *d)
 		d->phi = M_PI * (35.264 / 180);
 		d->teta = M_PI / 4;
 	}
+	// ft_putnbr(keycode);
 	return (0);
 }
 
@@ -83,11 +94,16 @@ int	ft_mouse_move(int x, int y, t_data *d)
 {
 	if (x >= 0 && x <= XS && y >= 0 && y <= YS)
 	{
-		d->teta = (XS / 2 - x) * ANI * PP_SCL / 5000;
+		d->teta = (XS / 2 - x) * ANIX * PP_SCL / 5000;
 		if (ABS(d->teta) > M_PI / 120)
 			d->teta -= SIGN(XS / 2 - x) * M_PI / 120;
 		else
 			d->teta = 0;
+		d->phi = (YS / 2 - y) * ANIY * PP_SCL / 7000;
+		if (ABS(d->phi) > M_PI / 120)
+			d->phi -= SIGN(YS / 2 - y) * M_PI / 120;
+		else
+			d->phi = 0;
 	}
 	return (0);
 }

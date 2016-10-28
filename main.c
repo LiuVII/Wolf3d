@@ -41,6 +41,20 @@ int		ft_displayit(t_data *d/*, int flag*/)
 	mlx_hook(d->win, 6, 1, ft_mouse_move, d);
 	mlx_hook(d->win, 5, 1, ft_mouse_up, d);
 	d->vwan.y = fmod(d->vwan.y + d->teta + M_PI, 2.0 * M_PI) - M_PI;
+	if (d->param == 1)
+	{
+		d->plrc.z -= d->jump_v;
+		if (d->jump_v > -JUMP_IMP + GRAV_C / 2)
+			d->jump_v -= GRAV_C;
+		else
+		{
+			d->jump_v = 0;
+			d->param = 0;
+		}			
+	}
+	if (d->vwan.x + (d->plrc.z - YS / 2) * ANIY + d->phi < M_PI / 3.0
+		&& d->vwan.x + d->phi > -M_PI / 3.0)
+		d->vwan.x += d->phi;
 	if (!d->img[0][(int)(d->plrc.y + (10.0 * d->oz.y) * SIGN(sin(d->vwan.y))) / GR_S]
 		[(int)(d->plrc.x - (10.0 * d->oz.y) * SIGN(cos(d->vwan.y))) / GR_S].z)
 	{
@@ -98,18 +112,12 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 void	data_init(t_data *d, char *map_name)
 {
 	d->img = NULL;
-	d->o1.x = XS * 1 / 2;
-	d->o1.y = YS / 2;
 	d->oz.x = 0;
 	d->oz.y = 0;
+	d->jump_v = 0;
 	d->min_dist = PP_SCL;
 	d->phi = 0;
 	d->teta = 0;
-	d->scale.x = 25;
-	d->scale.y = 25;
-	d->scale.z = 25;
-	d->iter = 84;
-	d->clr = 0;
 	if (ft_strcmp(map_name, "maps/01") == 0)
 	{
 		d->plrc.x = GR_S + GR_S / 2;
@@ -120,6 +128,8 @@ void	data_init(t_data *d, char *map_name)
 		d->plrc.x = GR_S + GR_S / 2;
 		d->plrc.y = 22 * GR_S + GR_S / 2;
 	}		
+	d->param = 0;
+	d->plrc.z = PP_CY;
 	d->vwan.y = M_PI / 4;
 	d->vwan.x = 0;
 }

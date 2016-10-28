@@ -165,16 +165,16 @@ void	raycast_map(t_data *d)
 		nesw = 0;
 		p2.y = YS;
 		p2.x = p1.x;
-		dist = raytrace(d, (double)(XS / 2 - p1.x) * ANI + d->vwan.y, &nesw);
-		dist = dist * cos((double)(XS / 2 - p1.x) * ANI);
-		// ((int)p1.x % 100) ? printf("%d, %f\n", dist, (double)(XS / 2 - p1.x) * ANI + d->vwan.y) : 0;
+		dist = raytrace(d, (double)(XS / 2 - p1.x) * ANIX + d->vwan.y, &nesw);
+		dist = dist * cos((double)(XS / 2 - p1.x) * ANIX);
+		// ((int)p1.x % 100) ? printf("%d, %f\n", dist, (double)(XS / 2 - p1.x) * ANIX + d->vwan.y) : 0;
 		if (dist > 0 && (h = (GR_S * PP_DST) / dist))
 		{	
 			//p1.z = hsv_rgb(fmod((double)dist / 1000.0 * 6.0, 6), 1, 1 - (double)dist / 500.0);
 			p1.z = hsv_rgb(nesw, 1, (dist < 1.5 * PP_SCL) ? 1 - 0.9 * (double)dist / PP_SCL / 1.5 : 0.1);
 			p2.z = p1.z;
-			p1.y = PP_CY + h / 2;
-			p2.y = PP_CY - h / 2;
+			p1.y = PP_CY + floor(h * (1 - d->plrc.z / YS)) + floor(d->vwan.x / ANIY);
+			p2.y = PP_CY - floor(h * (d->plrc.z / YS)) + floor(d->vwan.x / ANIY);
 			draw_line(d, p1, p2);
 		}
 		p1.z = hsv_rgb(3, 0.5, 0.5);
@@ -184,7 +184,7 @@ void	raycast_map(t_data *d)
 		// p1.z = hsv_rgb(5, 0.5, (dist < 1.5 * PP_SCL) ? 0.5 - 0.4 * (double)dist / PP_SCL / 1.5 : 0.1);
 		p2.z = hsv_rgb(5, 0.5, 0.5);
 		p1.z = p2.z;
-		p1.y = PP_CY + h / 2;
+		p1.y = PP_CY + floor(h * (1 - d->plrc.z / YS)) + floor(d->vwan.x / ANIY);
 		p2.y = YS;
 		draw_line(d, p1, p2);
 		if (dist < d->min_dist)
