@@ -64,4 +64,4 @@ fclean: clean
 	@/bin/rm -f $(NAME)
 	@make -C ./libft fclean
 
-re: flcean all
+re: fclean all

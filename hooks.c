@@ -15,10 +15,14 @@
 int	ft_key_hook(int keycode, t_data *d)
 {
 	(keycode == KEY_ESC) ? ft_free_n_exit(d, NULL, NULL, 0) : 0;
-	(keycode == KEY_UP) ? d->plrc.y -= 10 * sin(d->vwan.y) : 0;
-	(keycode == KEY_DOWN) ? d->plrc.y += 10 * sin(d->vwan.y): 0;
-	(keycode == KEY_LEFT) ? d->plrc.x -= 10 : 0;
-	(keycode == KEY_RIGHT) ? d->plrc.x += 10 : 0;
+	(keycode == KEY_UP) ? d->plrc.y -= 10.0 * sin(d->vwan.y) : 0;
+	(keycode == KEY_UP) ? d->plrc.x += 10.0 * cos(d->vwan.y) : 0;
+	(keycode == KEY_DOWN) ? d->plrc.y += 10.0 * sin(d->vwan.y): 0;
+	(keycode == KEY_DOWN) ? d->plrc.x -= 10.0 * cos(d->vwan.y) : 0;
+	(keycode == KEY_LEFT) ? d->plrc.x -= 10.0 * sin(d->vwan.y) : 0;
+	(keycode == KEY_LEFT) ? d->plrc.y -= 10.0 * cos(d->vwan.y) : 0;
+	(keycode == KEY_RIGHT) ? d->plrc.x += 10.0 * sin(d->vwan.y) : 0;
+	(keycode == KEY_RIGHT) ? d->plrc.y += 10.0 * cos(d->vwan.y) : 0;
 	(keycode == KEY_4) ? d->phi += 0.05 : 0;
 	(keycode == KEY_1) ? d->phi -= 0.05 : 0;
 	(keycode == KEY_5) ? d->teta -= 0.05 : 0;
@@ -37,7 +41,6 @@ int	ft_key_hook(int keycode, t_data *d)
 		d->phi = M_PI * (35.264 / 180);
 		d->teta = M_PI / 4;
 	}
-	ft_drawit(d);
 	return (0);
 }
 
@@ -45,24 +48,25 @@ int	ft_mouse_down(int button, int x, int y, t_data *d)
 {
 	if (x >= 0 && x <= XS && y >= 0 && YS <= YS)
 		d->mevent = button;
-	if (button == 2)
-	{
-		d->o1.x += (XS / 2 - x) / d->zoom;
-		d->o1.y += (YS / 2 - y) / d->zoom;
-	}
-	if (button == 5)
-	{
-		d->o1.x -= x / d->zoom * (1 - 1 / 1.2);
-		d->o1.y -= y / d->zoom * (1 - 1 / 1.2);
-		d->zoom *= 1.2;
-	}
-	else if (button == 4)
-	{
-		d->o1.x -= x / d->zoom * (1 - 1.2);
-		d->o1.y -= y / d->zoom * (1 - 1.2);
-		d->zoom /= 1.2;
-	}
-	ft_drawit(d);
+	if (button == 1 || button == 2)
+		d->oz.y = ((button - 1) * 2 - 1) * 5000 / PP_SCL;
+	// if (button == 2)
+	// {
+	// 	d->o1.x += (XS / 2 - x) / d->zoom;
+	// 	d->o1.y += (YS / 2 - y) / d->zoom;
+	// }
+	// if (button == 5)
+	// {
+	// 	d->o1.x -= x / d->zoom * (1 - 1 / 1.2);
+	// 	d->o1.y -= y / d->zoom * (1 - 1 / 1.2);
+	// 	d->zoom *= 1.2;
+	// }
+	// else if (button == 4)
+	// {
+	// 	d->o1.x -= x / d->zoom * (1 - 1.2);
+	// 	d->o1.y -= y / d->zoom * (1 - 1.2);
+	// 	d->zoom /= 1.2;
+	// }
 	return (0);
 }
 
@@ -70,18 +74,20 @@ int	ft_mouse_up(int button, int x, int y, t_data *d)
 {
 	if (button)
 		d->mevent = 0 * (x - y);
+	if (button == 1 || button == 2)
+		d->oz.y = 0;
 	return (0);
 }
 
 int	ft_mouse_move(int x, int y, t_data *d)
 {
-	if (d->param == 2 && d->mevent == 1 && x >= 0
-		&& x <= XS && y >= 0 && y <= YS)
+	if (x >= 0 && x <= XS && y >= 0 && y <= YS)
 	{
-		d->vwan.y += (XS / 2 - x) * ANI / 10.0;
-		// d->oz.x = x;
-		// d->oz.y = y;
-		ft_drawit(d);
+		d->teta = (XS / 2 - x) * ANI * PP_SCL / 5000;
+		if (ABS(d->teta) > M_PI / 120)
+			d->teta -= SIGN(XS / 2 - x) * M_PI / 120;
+		else
+			d->teta = 0;
 	}
 	return (0);
 }
@@ -91,11 +97,7 @@ int	ft_mouse_drag(int x, int y, t_data *d)
 	if (d->mevent == 1 && x >= 0
 		&& x <= XS && y >= 0 && y <= YS)
 	{
-		d->vwan.y += (XS / 2 - x) * ANI / 10.0;
-		d->vwan.y = fmod(d->vwan.y + M_PI, 2.0 * M_PI) - M_PI;
-		d->oz.x = x;
-		d->oz.y = y;
-		ft_drawit(d);
+
 	}
 	return (0);
 }

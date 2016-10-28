@@ -21,8 +21,8 @@
 # include <fcntl.h>
 # include <math.h>
 
-# define XS 640
-# define YS 640
+# define XS 800
+# define YS 600
 # define ZS 100
 # define KEY_ESC 53
 # define KEY_UP 126
@@ -76,7 +76,7 @@ typedef struct	s_data
 	t_3d		o1;
 	double		phi;
 	double		teta;
-	double		zoom;
+	double		min_dist;
 	t_3d		scale;
 	t_2d		oz;
 	int			param;

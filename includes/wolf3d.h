@@ -20,7 +20,6 @@
 # define ANI (FOV / (double)XS)
 # define PP_CX (XS / 2)
 # define PP_CY (YS / 2)
-
-
+# define PP_SCL sqrt(XS * XS + YS * YS)
 
 #endif

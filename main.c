@@ -13,7 +13,7 @@
 #include "wolf3d.h"
 #include <stdio.h>
 
-void	ft_displayit(t_data *d, int flag)
+int		ft_displayit(t_data *d/*, int flag*/)
 {
 // 	ft_putstr("\
 // ____________________________________\n\
@@ -33,13 +33,23 @@ void	ft_displayit(t_data *d, int flag)
 // Center:\n\
 // 	Mouse click: Btn 2\n\
 // ____________________________________\n");
-	(flag == 0) ? ft_free_n_exit(d, NULL, NULL, -1) : 0;
+	// (flag == 0) ? ft_free_n_exit(d, NULL, NULL, -1) : 0;
 	mlx_expose_hook(d->win, ft_drawit, d);
 	mlx_key_hook(d->win, ft_key_hook, d);
 	mlx_hook(d->win, 4, 1, ft_mouse_down, d);
-	mlx_hook(d->win, 6, 1, ft_mouse_drag, d);
+	//mlx_hook(d->win, 6, 1, ft_mouse_drag, d);
+	mlx_hook(d->win, 6, 1, ft_mouse_move, d);
 	mlx_hook(d->win, 5, 1, ft_mouse_up, d);
-	mlx_loop(d->mlx);
+	d->vwan.y = fmod(d->vwan.y + d->teta + M_PI, 2.0 * M_PI) - M_PI;
+	if (!d->img[0][(int)(d->plrc.y + (10.0 * d->oz.y) * SIGN(sin(d->vwan.y))) / GR_S]
+		[(int)(d->plrc.x - (10.0 * d->oz.y) * SIGN(cos(d->vwan.y))) / GR_S].z)
+	{
+		d->plrc.y += d->oz.y * sin(d->vwan.y);
+		d->plrc.x -= d->oz.y * cos(d->vwan.y);
+	}
+	ft_drawit(d);
+	// mlx_loop(d->mlx);
+	return (0);
 }
 
 void	ft_puterr_msg(int err)
@@ -85,14 +95,14 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 	(err >= 0) ? exit(0) : exit(1);
 }
 
-void	data_init(t_data *d)
+void	data_init(t_data *d, char *map_name)
 {
 	d->img = NULL;
 	d->o1.x = XS * 1 / 2;
 	d->o1.y = YS / 2;
-	d->oz.x = XS / 2;
-	d->oz.y = YS / 2;
-	d->zoom = 1;
+	d->oz.x = 0;
+	d->oz.y = 0;
+	d->min_dist = PP_SCL;
 	d->phi = 0;
 	d->teta = 0;
 	d->scale.x = 25;
@@ -100,8 +110,16 @@ void	data_init(t_data *d)
 	d->scale.z = 25;
 	d->iter = 84;
 	d->clr = 0;
-	d->plrc.x = GR_S + GR_S / 2;
-	d->plrc.y = 2 * GR_S + GR_S / 2;
+	if (ft_strcmp(map_name, "maps/01") == 0)
+	{
+		d->plrc.x = GR_S + GR_S / 2;
+		d->plrc.y = 2 * GR_S + GR_S / 2;
+	}
+	else if (ft_strcmp(map_name, "maps/medium") == 0)
+	{
+		d->plrc.x = GR_S + GR_S / 2;
+		d->plrc.y = 22 * GR_S + GR_S / 2;
+	}		
 	d->vwan.y = M_PI / 4;
 	d->vwan.x = 0;
 }
@@ -120,12 +138,14 @@ int		main(int argc, char **argv)
 		ft_puterr_msg(-5);
 		return (1);
 	}
-	data_init(d);
+	data_init(d, argv[1]);
 	if (!(d->mlx = mlx_init()))
 		ft_free_n_exit(d, NULL, NULL, -2);
 	if (!(d->win = mlx_new_window(d->mlx, XS, YS, argv[1])))
 		ft_free_n_exit(d, NULL, NULL, -3);
 	ft_read(argv[1], d);
-	ft_displayit(d, 1);
+	mlx_loop_hook(d->mlx, ft_displayit, d);
+	mlx_loop(d->mlx);
+	// ft_displayit(d, 1);
 	return (0);
 }
