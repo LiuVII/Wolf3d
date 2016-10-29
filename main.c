@@ -111,6 +111,11 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 
 void	data_init(t_data *d, char *map_name)
 {
+	int width;
+	int height;
+
+	width = XS;
+	height = YS;
 	d->img = NULL;
 	d->oz.x = 0;
 	d->oz.y = 0;
@@ -132,11 +137,22 @@ void	data_init(t_data *d, char *map_name)
 	d->plrc.z = PP_CY;
 	d->vwan.y = M_PI / 4;
 	d->vwan.x = 0;
+	// d->img_p= mlx_xpm_file_to_image(d->mlx, "wallwindow2.xpm", &width, &height);
+	(d->wall).ptr= mlx_xpm_file_to_image(d->mlx, "textures/wl_da.xpm", &width, &height);
+	(d->wall).inf = mlx_get_data_addr((d->wall).ptr, &((d->wall).bpp), &((d->wall).ls), &((d->wall).endian));
+	(d->floor).ptr= mlx_xpm_file_to_image(d->mlx, "textures/flr_wd.xpm", &width, &height);
+	(d->floor).inf = mlx_get_data_addr((d->floor).ptr, &((d->floor).bpp), &((d->floor).ls), &((d->floor).endian));
+	// printf("wall bpp %d endian %d\n", d->wall.bpp, d->wall.endian);
 }
 
 int		main(int argc, char **argv)
 {
 	t_data *d;
+	int width;
+	int height;
+
+	width = XS;
+	height = YS;
 
 	if (!(argc > 1 && argv[1]))
 	{
@@ -148,11 +164,11 @@ int		main(int argc, char **argv)
 		ft_puterr_msg(-5);
 		return (1);
 	}
-	data_init(d, argv[1]);
 	if (!(d->mlx = mlx_init()))
 		ft_free_n_exit(d, NULL, NULL, -2);
 	if (!(d->win = mlx_new_window(d->mlx, XS, YS, argv[1])))
 		ft_free_n_exit(d, NULL, NULL, -3);
+	data_init(d, argv[1]);
 	ft_read(argv[1], d);
 	mlx_loop_hook(d->mlx, ft_displayit, d);
 	mlx_loop(d->mlx);

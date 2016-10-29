@@ -32,11 +32,11 @@ int	ft_key_hook(int keycode, t_data *d)
 	if (keycode == KEY_C)
 	{
 		if (sit == 0 && ++sit)
-			d->plrc.z += (3 * YS) / 8;
+			d->plrc.z += (3 * YS) / 8.0;
 		else if (sit == 1 && sit--)
-			d->plrc.z -= (3 * YS) / 8;		 
+			d->plrc.z -= (3 * YS) / 8.0;		 
 	}
-	if (keycode == KEY_SPACE && d->plrc.z >= (YS) / 2) 
+	if (keycode == KEY_SPACE && d->param == 0) 
 	{
 		d->jump_v += JUMP_IMP;
 		d->param = 1;

@@ -64,6 +64,16 @@ typedef struct	si_3d
 	int			z;
 }				ti_3d;
 
+typedef struct	s_img
+{
+	void		*ptr;
+	char		*inf;
+	int			bpp;
+	int			ls;
+	int			endian;
+	int			ofs;
+}				t_img;
+
 typedef struct	s_data
 {
 	t_3d		plrc;
@@ -74,6 +84,8 @@ typedef struct	s_data
 	void		*win;
 	void		*img_p;
 	char		*img_p0;
+	t_img		wall;
+	t_img		floor;
 	double		phi;
 	double		teta;
 	double		min_dist;

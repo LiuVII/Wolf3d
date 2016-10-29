@@ -15,7 +15,7 @@
 # include "window.h"
 
 # define FOV (M_PI / 3.0)
-# define GR_S 160
+# define GR_S 256
 # define PP_DST (XS / 2.0 / tan(FOV / 2.0))  
 # define ANIX (FOV / (double)XS)
 # define ANIY (FOV / (double)YS)
@@ -23,6 +23,7 @@
 # define PP_CY (YS / 2)
 # define PP_SCL sqrt(XS * XS + YS * YS)
 # define GRAV_C 1
-# define JUMP_IMP sqrt(GRAV_C * YS / 2.0)
+# define JUMP_IMP (((int)sqrt(GRAV_C * YS / 2.0) / GRAV_C) * GRAV_C)
+# define TEXT_S GR_S
 
 #endif
