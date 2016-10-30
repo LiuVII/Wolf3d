@@ -60,15 +60,11 @@ int	raytrace(t_data *d, double ang, double *nesw)
 {
 	double y;
 	double x;
-	// double col[2];
 	int i;
 	int dist[2];
 
 	dist[0] = -1;
 	dist[1] = -1;
-	// col[0] = 0;
-	// col[1] = 0;
-	//correct in case of diff ang
 	ang = fmod(ang, 2.0 * M_PI) + ((ang < 0) ? (2.0 * M_PI) : 0);
 	// printf("| %f |", ang);
 	i = d->plrc.y / GR_S + 1;
@@ -76,14 +72,13 @@ int	raytrace(t_data *d, double ang, double *nesw)
 	{
 		y = floor(d->plrc.y / GR_S) * GR_S + ((ang < M_PI) ? -1 : GR_S + 1);
 		x = d->plrc.x + (d->plrc.y - y) * cos(ang) / sin(ang);
-	//correct in case of diff ang
 		while (x > 0 && x < GR_S * d->img_size.x && y > 0 && y < GR_S * d->img_size.y/* && --i*/)
 		{
 			//printf("| %d %d %d %f %f |", i,  (int)y / GR_S, (int)x / GR_S, d->img[0][(int)y / GR_S][(int)x / GR_S].z, ang);
 			if (d->img[0][(int)y / GR_S][(int)x / GR_S].z > 0)
 			{
 				// printf("| %d %d %d %f %f |", i,  (int)y / GR_S, (int)x / GR_S, d->img[0][(int)y / GR_S][(int)x / GR_S].z, ang);
-				d->wall.ofs = (int)x % GR_S;
+				d->wall.ofs.x = (int)x % GR_S;
 				*nesw = (ang < M_PI) ? 4.0 : 2.0;
 				dist[0] = ABS((d->plrc.y - y) / sin(ang));
 				break ;
@@ -97,16 +92,13 @@ int	raytrace(t_data *d, double ang, double *nesw)
 	{
 		x = floor(d->plrc.x / GR_S) * GR_S + ((ABS(ang - M_PI) * 2 < M_PI) ? -1 : GR_S + 1);
 		y = d->plrc.y + (d->plrc.x - x) * sin(ang) / cos(ang);
-	//correct in case of diff ang
 		while (x > 0 && x < GR_S * d->img_size.x && y > 0 && y < GR_S * d->img_size.y/* && --i*/)
 		{
 			// printf("| %d %d %d %f |", i,  y / GR_S, x / GR_S, d->img[0][y / GR_S][x / GR_S].z);
 			if (d->img[0][(int)y / GR_S][(int)x / GR_S].z > 0 &&
-				(dist[0] > (dist[1] = ABS((d->plrc.x - x) / cos(ang))) || dist[0] == -1))
+				(dist[0] > (dist[1] = ABS((d->plrc.x - x) / cos(ang))) || *nesw == 0))
 			{
-				d->wall.ofs = (int)y % GR_S;
-				// dist[1] = ABS((d->plrc.x - x) / cos(ang));
-				// col[1] = (ABS(ang - M_PI) * 2 < M_PI) ? 0.1 : 1.0;
+				d->wall.ofs.x = (int)y % GR_S;
 				dist[0] = dist[1];
 				*nesw = (ABS(ang - M_PI) * 2 < M_PI) ? 0.1 : 1.0;
 				break ;
@@ -115,13 +107,7 @@ int	raytrace(t_data *d, double ang, double *nesw)
 			y -= GR_S * sin(ang) / ABS(cos(ang));
 		}
 	}
-	// if (dist[1] == -1 || (dist[0] > 0 && dist[0] < dist[1]))
-	// {
-		// *nesw = col;
-		return (dist[0]);
-	// }
-	// *nesw = col[1];
-	// return (dist[1]);
+	return (dist[0]);
 }
 
 void	draw_line(t_data *d, t_3d p1, t_3d p2)
@@ -153,26 +139,15 @@ void	draw_line(t_data *d, t_3d p1, t_3d p2)
 	}
 }
 
-int		get_color_im(t_3d p1, t_3d p2, t_3d p, t_img img)
+int		get_color_im(int x, int y, t_img img)
 {
 	int		c;
 	int		i;
 	long	mem;
 
 	c = 0;
-	p.z = p2.z;
-	//next lines are for floor
-	// p.z = PP_DST * (YS - d->plrc.z) / (p.y - PP_CY);
-	// img.ofs = (int)(d->plrc.x - p.z * cos((double)(XS / 2 - p1.x) * ANIX + d->vwan.y)) / GR_S;
-	// fl.y = (int)(d->plrc.y - p.z * sin((double)(XS / 2 - p1.x) * ANIX + d->vwan.y)) / GR_S;
-	//floor lines end here
-	// if (flag == 1)
-	// 	p.z += (p2.z - p1.z) * (p.x - p1.x) / (p2.x - p1.x);
-	// else if (flag == 2)
-	// 	p.z += (p2.z - p1.z) * (p.y - p1.y) / (p2.y - p1.y);
-	// return (p.z);
 	i = (img.bpp >> 3) - 1;
-	mem = (img.bpp >> 3) * img.ofs + img.ls * (int)(TEXT_S * ((p.y - p1.y) / (p2.y - p1.y)));
+	mem = (img.bpp >> 3) * x + img.ls * y;
 	while (i--)
 	{
 		c = c << 8;
@@ -199,7 +174,42 @@ void	draw_line_im(t_data *d, t_3d p1, t_3d p2, t_img img)
 		a.y = (p2.x - p1.x) / (p2.y - p1.y);
 		b.y = (p1.x * p2.y - p2.x * p1.y) / (p2.y - p1.y);
 		while ((p2.y - (p.y += (p2.y - p1.y) / dist)) * SIGN(p2.y - p1.y) >= 0)
-			draw_pixel(d, a.y * p.y + b.y, p.y, get_color_im(p1, p2, p, img));
+		{
+			img.ofs.y = TEXT_S * ((p.y - p1.y) / (p2.y - p1.y));
+			draw_pixel(d, a.y * p.y + b.y, p.y, get_color_im(img.ofs.x, img.ofs.y, img));
+		}
+	}
+}
+
+void	draw_floor(t_data *d, t_3d p1, t_3d p2, t_img img)
+{
+	t_3d	p;
+	t_2d	a;
+	t_2d	b;
+	t_2di	text_p;
+	float	dist;
+
+	if ((p1.x > XS && p2.x > XS) || (p1.x < 0 && p2.x < 0) ||
+		(p1.y > YS && p2.y > YS) || (p1.y < 0 && p2.y < 0))
+		return ;
+	p.x = p1.x;
+	p.y = p1.y;
+	dist = sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+	if (ABS(p1.y - p2.y) / dist >= 0.01)
+	{
+		a.y = (p2.x - p1.x) / (p2.y - p1.y);
+		b.y = (p1.x * p2.y - p2.x * p1.y) / (p2.y - p1.y);
+		while ((p2.y - (p.y += (p2.y - p1.y) / dist)) * SIGN(p2.y - p1.y) >= 0)
+		{
+			p.z = p1.z * (p1.y - PP_CY - floor(d->vwan.x / ANIY)) / (p.y - PP_CY - floor(d->vwan.x / ANIY));
+			text_p.x = (img.ofs.x - (int)((p1.z - p.z) * cos(d->ang)));
+			text_p.y = (img.ofs.y + (int)((p1.z - p.z) * sin(d->ang)));		
+			// if (text_p.x < 0 || text_p.x > GR_S * d->img_size.x
+			// 	|| text_p.y < 0 || text_p.y > GR_S * d->img_size.y)
+			// 	draw_pixel(d, a.y * p.y + b.y, p.y, hsv_rgb(5, 0.5, 0.5));
+			// else
+				draw_pixel(d, a.y * p.y + b.y, p.y, get_color_im(text_p.x % GR_S, text_p.y % GR_S, img));
+		}
 	}
 }
 
@@ -217,12 +227,26 @@ void	raycast_map(t_data *d)
 	{
 		h = 0;
 		nesw = 0;
+		d->ang = (double)(XS / 2 - p1.x) * ANIX + d->vwan.y;
+		d->ang = fmod(d->ang, 2.0 * M_PI) + ((d->ang < 0) ? (2.0 * M_PI) : 0);
+		dist = raytrace(d, d->ang, &nesw);
+		//distance to edges of the map
+		if (!nesw)
+		{
+			p2.y = -1;
+			p2.x = -1;
+			if (sin(d->ang) != 0)
+				p2.y = ABS(((d->ang < M_PI) ? d->plrc.y : (d->img_size.y * GR_S - d->plrc.y)) / sin(d->ang));
+			if (cos(d->ang) != 0)
+				p2.x = ABS(((ABS(d->ang - M_PI) * 2 < M_PI) ? d->plrc.x : (d->img_size.x * GR_S - d->plrc.x)) / cos(d->ang));
+			// printf("|ang %f y %f  x%f|", d->ang, p2.y, p2.x);
+			dist = ((p2.y >= 0 && p2.y < p2.x) || p2.x == -1) ? p2.y : p2.x;
+		} 
 		p2.y = YS;
 		p2.x = p1.x;
-		dist = raytrace(d, (double)(XS / 2 - p1.x) * ANIX + d->vwan.y, &nesw);
 		dist = dist * cos((double)(XS / 2 - p1.x) * ANIX);
 		// ((int)p1.x % 100) ? printf("%d, %f\n", dist, (double)(XS / 2 - p1.x) * ANIX + d->vwan.y) : 0;
-		if (dist > 0 && (h = (GR_S * PP_DST) / dist))
+		if ((h = (GR_S * PP_DST) / dist) && nesw > 0)
 		{	
 			// p1.z = hsv_rgb(nesw, 1, (dist < 1.5 * PP_SCL) ? 1 - 0.9 * (double)dist / PP_SCL / 1.5 : 0.1);
 			p1.z = dist;
@@ -237,12 +261,15 @@ void	raycast_map(t_data *d)
 		p1.y = 0;
 		draw_line(d, p1, p2);
 		// p1.z = hsv_rgb(5, 0.5, (dist < 1.5 * PP_SCL) ? 0.5 - 0.4 * (double)dist / PP_SCL / 1.5 : 0.1);
-		p1.z = hsv_rgb(5, 0.5, 0.5);
-		// p1.z = dist / cos((double)(XS / 2 - p1.x) * ANIX); 
-		p2.z = p1.z;
+		// p1.z = hsv_rgb(5, 0.5, 0.5);
+		p1.z = dist / cos((double)(XS / 2 - p1.x) * ANIX); 
+		// p2.z = p1.z;
+		d->floor.ofs.x = d->plrc.x + p1.z * cos(d->ang);
+		d->floor.ofs.y = d->plrc.y - p1.z * sin(d->ang);
+		p2.z = PP_DST / cos((double)(XS / 2 - p1.x) * ANIX);
 		p1.y = PP_CY + floor(h * (1 - d->plrc.z / YS)) + floor(d->vwan.x / ANIY);
 		p2.y = YS;
-		draw_line(d, p1, p2);
+		draw_floor(d, p1, p2, d->floor);
 		if (dist < d->min_dist)
 			d->min_dist = dist;
 	}
@@ -254,6 +281,7 @@ int		ft_drawit(t_data *d)
 	d->img_p0 = mlx_get_data_addr(d->img_p, &(d->bpp), &(d->ls), &(d->endian));
 	raycast_map(d);
 	mlx_clear_window(d->mlx, d->win);
+	// mlx_put_image_to_window(d->mlx, d->win, d->sky.ptr, 0, 0);
 	mlx_put_image_to_window(d->mlx, d->win, d->img_p, 0, 0);
 	mlx_destroy_image(d->mlx, d->img_p);
 	return (0);

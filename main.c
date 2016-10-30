@@ -142,6 +142,11 @@ void	data_init(t_data *d, char *map_name)
 	(d->wall).inf = mlx_get_data_addr((d->wall).ptr, &((d->wall).bpp), &((d->wall).ls), &((d->wall).endian));
 	(d->floor).ptr= mlx_xpm_file_to_image(d->mlx, "textures/flr_wd.xpm", &width, &height);
 	(d->floor).inf = mlx_get_data_addr((d->floor).ptr, &((d->floor).bpp), &((d->floor).ls), &((d->floor).endian));
+	(d->sky).ptr= mlx_xpm_file_to_image(d->mlx, "textures/sky.xpm", &width, &height);
+	(d->sky).inf = mlx_get_data_addr((d->sky).ptr, &((d->sky).bpp), &((d->sky).ls), &((d->sky).endian));
+	d->wall.id = 1;
+	d->floor.id = 0;
+	d->sky.id = 2;
 	// printf("wall bpp %d endian %d\n", d->wall.bpp, d->wall.endian);
 }
 

@@ -50,6 +50,12 @@ typedef struct	s_2d
 	double		y;
 }				t_2d;
 
+typedef struct	s_2di
+{
+	int			x;
+	int			y;
+}				t_2di;
+
 typedef struct	s_3d
 {
 	double		x;
@@ -57,21 +63,22 @@ typedef struct	s_3d
 	double		z;
 }				t_3d;
 
-typedef struct	si_3d
+typedef struct	s_3di
 {
 	int			x;
 	int			y;
 	int			z;
-}				ti_3d;
+}				t_3di;
 
 typedef struct	s_img
 {
+	int			id;
 	void		*ptr;
 	char		*inf;
 	int			bpp;
 	int			ls;
 	int			endian;
-	int			ofs;
+	t_2di		ofs;
 }				t_img;
 
 typedef struct	s_data
@@ -86,6 +93,7 @@ typedef struct	s_data
 	char		*img_p0;
 	t_img		wall;
 	t_img		floor;
+	t_img		sky;
 	double		phi;
 	double		teta;
 	double		min_dist;
@@ -94,6 +102,7 @@ typedef struct	s_data
 	int			param;
 	int			bpp;
 	int			ls;
+	double		ang;
 	int			endian;
 	int			mevent;
 }				t_data;
