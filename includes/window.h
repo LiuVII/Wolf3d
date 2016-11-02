@@ -105,9 +105,11 @@ typedef struct	s_data
 	double		ang;
 	int			endian;
 	int			mevent;
+	int			run;
 }				t_data;
 
 int				ft_key_hook(int keycode, t_data *d);
+int				ft_close(t_data *d);
 int				ft_mouse_move(int x, int y, t_data *d);
 int				ft_mouse_down(int button, int x, int y, t_data *d);
 int				ft_mouse_up(int button, int x, int y, t_data *d);

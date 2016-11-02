@@ -12,6 +12,12 @@
 
 #include "wolf3d.h"
 
+int	ft_close(t_data *d)
+{
+	ft_free_n_exit(d, NULL, NULL, 0);
+	return (0);
+}
+
 int	ft_key_hook(int keycode, t_data *d)
 {
 	static int sit;
@@ -29,6 +35,7 @@ int	ft_key_hook(int keycode, t_data *d)
 	(keycode == KEY_1) ? d->phi -= 0.05 : 0;
 	(keycode == KEY_5) ? d->teta -= 0.05 : 0;
 	(keycode == KEY_2) ? d->teta += 0.05 : 0;
+	(keycode == 15) ? d->run = (d->run + 1) % 2 : 0;
 	if (keycode == KEY_C)
 	{
 		if (sit == 0 && ++sit)
@@ -60,7 +67,7 @@ int	ft_mouse_down(int button, int x, int y, t_data *d)
 	if (x >= 0 && x <= XS && y >= 0 && YS <= YS)
 		d->mevent = button;
 	if (button == 1 || button == 2)
-		d->oz.y = ((button - 1) * 2 - 1) * 5000 / PP_SCL;
+		d->oz.y = ((button - 1) * 2 - 1) * 10000 * (1 + 0.5 * d->run) / PP_SCL;
 	// if (button == 2)
 	// {
 	// 	d->o1.x += (XS / 2 - x) / d->zoom;

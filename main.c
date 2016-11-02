@@ -36,6 +36,7 @@ int		ft_displayit(t_data *d/*, int flag*/)
 	// (flag == 0) ? ft_free_n_exit(d, NULL, NULL, -1) : 0;
 	mlx_expose_hook(d->win, ft_drawit, d);
 	mlx_key_hook(d->win, ft_key_hook, d);
+	mlx_hook(d->win, 17, 1, ft_close, d);
 	mlx_hook(d->win, 4, 1, ft_mouse_down, d);
 	//mlx_hook(d->win, 6, 1, ft_mouse_drag, d);
 	mlx_hook(d->win, 6, 1, ft_mouse_move, d);
@@ -55,8 +56,8 @@ int		ft_displayit(t_data *d/*, int flag*/)
 	if (d->vwan.x + (d->plrc.z - YS / 2) * ANIY + d->phi < M_PI / 3.0
 		&& d->vwan.x + d->phi > -M_PI / 3.0)
 		d->vwan.x += d->phi;
-	if (!d->img[0][(int)(d->plrc.y + (10.0 * d->oz.y) * SIGN(sin(d->vwan.y))) / GR_S]
-		[(int)(d->plrc.x - (10.0 * d->oz.y) * SIGN(cos(d->vwan.y))) / GR_S].z)
+	if (!d->img[0][(int)(d->plrc.y + (3.0 * d->oz.y + 10 * SIGN(d->oz.y)) * SIGN(sin(d->vwan.y))) / GR_S]
+		[(int)(d->plrc.x - (3.0 * d->oz.y + 10 * SIGN(d->oz.y)) * SIGN(cos(d->vwan.y))) / GR_S].z)
 	{
 		d->plrc.y += d->oz.y * sin(d->vwan.y);
 		d->plrc.x -= d->oz.y * cos(d->vwan.y);
@@ -106,6 +107,7 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 	(img_l && *img_l) ? ft_lstclr(img_l) : 0;
 	(line) ? free(line) : 0;
 	(err < 0) ? ft_puterr_msg(err) : 0;
+	//system("killall afplay");
 	(err >= 0) ? exit(0) : exit(1);
 }
 
@@ -117,6 +119,7 @@ void	data_init(t_data *d, char *map_name)
 	width = XS;
 	height = YS;
 	d->img = NULL;
+	d->run = 0;
 	d->oz.x = 0;
 	d->oz.y = 0;
 	d->jump_v = 0;
@@ -144,20 +147,17 @@ void	data_init(t_data *d, char *map_name)
 	(d->floor).inf = mlx_get_data_addr((d->floor).ptr, &((d->floor).bpp), &((d->floor).ls), &((d->floor).endian));
 	(d->sky).ptr= mlx_xpm_file_to_image(d->mlx, "textures/sky.xpm", &width, &height);
 	(d->sky).inf = mlx_get_data_addr((d->sky).ptr, &((d->sky).bpp), &((d->sky).ls), &((d->sky).endian));
+	// printf("sky width %d height %d\n", width, height);
 	d->wall.id = 1;
 	d->floor.id = 0;
 	d->sky.id = 2;
-	// printf("wall bpp %d endian %d\n", d->wall.bpp, d->wall.endian);
+	// printf("sky bpp %d ls %d endian %d\n", (d->sky.bpp >> 3), d->sky.ls, d->sky.endian);
 }
 
 int		main(int argc, char **argv)
 {
 	t_data *d;
-	int width;
-	int height;
-
-	width = XS;
-	height = YS;
+	// pid_t	x;
 
 	if (!(argc > 1 && argv[1]))
 	{
@@ -175,8 +175,16 @@ int		main(int argc, char **argv)
 		ft_free_n_exit(d, NULL, NULL, -3);
 	data_init(d, argv[1]);
 	ft_read(argv[1], d);
-	mlx_loop_hook(d->mlx, ft_displayit, d);
-	mlx_loop(d->mlx);
+	// x = fork();
+	// if (x < 0)
+	// 	ft_free_n_exit(d, NULL, NULL, -2);
+	// else if (!x)
+	// 	system("afplay music/Koan_Castle.mp3 &");
+	// else
+	{
+		mlx_loop_hook(d->mlx, ft_displayit, d);
+		mlx_loop(d->mlx);
+	}
 	// ft_displayit(d, 1);
 	return (0);
 }
