@@ -47,6 +47,7 @@ int	ft_key_hook(int keycode, t_data *d)
 	{
 		d->jump_v += JUMP_IMP;
 		d->param = 1;
+		system("afplay sound/jump2.mp3 &");
 	}
 	if (keycode == KEY_E)
 	{
@@ -67,7 +68,7 @@ int	ft_mouse_down(int button, int x, int y, t_data *d)
 	if (x >= 0 && x <= XS && y >= 0 && YS <= YS)
 		d->mevent = button;
 	if (button == 1 || button == 2)
-		d->oz.y = ((button - 1) * 2 - 1) * 10000 * (1 + 0.5 * d->run) / PP_SCL;
+		d->oz.y = (1 - (button - 1) * 2) * 10000 * (1 + 0.5 * d->run) / PP_SCL;
 	// if (button == 2)
 	// {
 	// 	d->o1.x += (XS / 2 - x) / d->zoom;

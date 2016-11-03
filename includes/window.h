@@ -78,7 +78,7 @@ typedef struct	s_img
 	int			bpp;
 	int			ls;
 	int			endian;
-	t_2di		ofs;
+	t_2d		ofs;
 }				t_img;
 
 typedef struct	s_data
