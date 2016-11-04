@@ -78,6 +78,8 @@ typedef struct	s_img
 	int			bpp;
 	int			ls;
 	int			endian;
+	int			width;
+	int			height;
 	t_2d		ofs;
 }				t_img;
 
@@ -94,6 +96,7 @@ typedef struct	s_data
 	t_img		wall;
 	t_img		floor;
 	t_img		sky;
+	t_img		youwin;
 	double		phi;
 	double		teta;
 	double		min_dist;

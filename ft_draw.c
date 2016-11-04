@@ -286,3 +286,25 @@ int		ft_drawit(t_data *d)
 	mlx_destroy_image(d->mlx, d->img_p);
 	return (0);
 }
+
+int		draw_win(t_data *d)
+{
+	t_3d p1;
+	t_3d p2;
+	t_3d p;
+
+	d->img_p = mlx_new_image(d->mlx, XS, YS);
+	d->img_p0 = mlx_get_data_addr(d->img_p, &(d->bpp), &(d->ls), &(d->endian));
+	p1.x = -1;
+	p1.y = 0;
+	p2.x = d->youwin.width + 1;
+	p2.y = d->youwin.height;
+	p = p1;
+	while (++p.x < p2.x)
+		draw_line_im(d, p, p2, d->youwin);
+	mlx_clear_window(d->mlx, d->win);
+	mlx_put_image_to_window(d->mlx, d->win, d->img_p, (XS - d->youwin.width) / 2, (YS - d->youwin.height) / 2);
+	mlx_destroy_image(d->mlx, d->img_p);
+	d->mevent = 0;
+	return (0);
+}

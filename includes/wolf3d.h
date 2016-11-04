@@ -26,4 +26,6 @@
 # define JUMP_IMP (((int)sqrt(GRAV_C * YS / 2.0) / GRAV_C) * GRAV_C)
 # define TEXT_S GR_S
 
+int				draw_win(t_data *d);
+
 #endif
