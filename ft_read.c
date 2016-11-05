@@ -12,27 +12,6 @@
 
 #include "wolf3d.h"
 
-// float		set_mean(t_data *d)
-// {
-// 	int		i;
-// 	int		j;
-// 	int		k;
-// 	double	sum;
-// 	int		points;
-
-// 	i = -1;
-// 	points = 0;
-// 	sum = 0;
-// 	while (++i < d->img_size.z && (j = -1))
-// 		while (++j < d->img_size.y && (k = -1))
-// 			while (++k < d->img_size.x)
-// 			{
-// 				sum += d->img[i][j][k].z;
-// 				points++;
-// 			}
-// 	return (sum / points);
-// }
-
 static int	ft_read_to_list(int fd, t_list **img_l, t_data *d)
 {
 	t_list	*tmp;
@@ -76,8 +55,6 @@ static int	ft_split_n_rec(t_data *d, t_list *img_l, int rows)
 		while (tab_line[++j])
 		{
 			(d->img)[0][i][j].z = ft_atoi(tab_line[j]);
-			// ((d->img)[0][i][j].z > d->zmax) ? d->zmax = (d->img)[0][i][j].z : 0;
-			// ((d->img)[0][i][j].z < d->zmin) ? d->zmin = (d->img)[0][i][j].z : 0;
 			(d->img)[0][i][j].x = j;
 			(d->img)[0][i][j].y = i;
 		}
@@ -109,7 +86,6 @@ int			ft_read(char *filename, t_data *d)
 	d->img_size.y = rows;
 	if (ft_split_n_rec(d, img_l, rows) < 0)
 		ft_free_n_exit(d, &img_l, NULL, -5);
-	// d->zmean = set_mean(d);
 	ft_lstclr(&img_l);
 	return (0);
 }

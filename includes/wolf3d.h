@@ -16,7 +16,7 @@
 
 # define FOV (M_PI / 3.0)
 # define GR_S 256
-# define PP_DST (XS / 2.0 / tan(FOV / 2.0))  
+# define PP_DST (XS / 2.0 / tan(FOV / 2.0))
 # define ANIX (FOV / (double)XS)
 # define ANIY (FOV / (double)YS)
 # define PP_CX (XS / 2)
@@ -27,5 +27,6 @@
 # define TEXT_S GR_S
 
 int				draw_win(t_data *d);
+void			draw_3dmap(t_data *d, t_3d p1, double dist, double nesw);
 
 #endif

@@ -143,11 +143,6 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 
 void	data_init(t_data *d, char *map_name)
 {
-	// int width;
-	// int height;
-
-	// width = XS;
-	// height = YS;
 	d->img = NULL;
 	d->run = 0;
 	d->oz.x = 0;
@@ -170,7 +165,6 @@ void	data_init(t_data *d, char *map_name)
 	d->plrc.z = PP_CY;
 	d->vwan.y = M_PI / 4;
 	d->vwan.x = 0;
-	// d->img_p= mlx_xpm_file_to_image(d->mlx, "wallwindow2.xpm", &width, &height);
 	(d->wall).ptr= mlx_xpm_file_to_image(d->mlx, "textures/wl_da.xpm", &(d->wall.width), &(d->wall.height));
 	(d->wall).inf = mlx_get_data_addr((d->wall).ptr, &((d->wall).bpp), &((d->wall).ls), &((d->wall).endian));
 	(d->floor).ptr= mlx_xpm_file_to_image(d->mlx, "textures/flr_wd.xpm", &(d->floor.width), &(d->floor.height));
@@ -179,12 +173,10 @@ void	data_init(t_data *d, char *map_name)
 	(d->sky).inf = mlx_get_data_addr((d->sky).ptr, &((d->sky).bpp), &((d->sky).ls), &((d->sky).endian));
 	(d->youwin).ptr= mlx_xpm_file_to_image(d->mlx, "textures/youwin.xpm", &(d->youwin.width), &(d->youwin.height));
 	(d->youwin).inf = mlx_get_data_addr((d->youwin).ptr, &((d->youwin).bpp), &((d->youwin).ls), &((d->youwin).endian));
-	// printf("sky width %d height %d\n", width, height);
 	d->wall.id = 1;
 	d->floor.id = 0;
 	d->sky.id = 2;
 	d->youwin.id = 2;
-	// printf("sky bpp %d ls %d endian %d\n", (d->sky.bpp >> 3), d->sky.ls, d->sky.endian);
 }
 
 int		main(int argc, char **argv)
