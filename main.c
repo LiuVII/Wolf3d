@@ -39,49 +39,19 @@ int		ft_displayit(t_data *d/*, int flag*/)
 	// (flag == 0) ? ft_free_n_exit(d, NULL, NULL, -1) : 0;
 	static pid_t pid = -1;
 	int wstatus;
+
 	mlx_expose_hook(d->win, ft_drawit, d);
 	mlx_key_hook(d->win, ft_key_hook, d);
 	mlx_hook(d->win, 17, 1, ft_close, d);
-	mlx_hook(d->win, 4, 1, ft_mouse_down, d);
-	//mlx_hook(d->win, 6, 1, ft_mouse_drag, d);
-	mlx_hook(d->win, 6, 1, ft_mouse_move, d);
-	mlx_hook(d->win, 5, 1, ft_mouse_up, d);
 	if (d->img[0][(int)(d->plrc.y) / GR_S][(int)(d->plrc.x) / GR_S].z == -1)
 		draw_win(d);
 	else
 	{
-		if (d->param == 0 && d->mevent == 1 && (waitpid(pid, &wstatus, WNOHANG)))
+		if (d->param == 0 && d->mevent == 1 && (waitpid(pid, &wstatus, WNOHANG)) && !(pid = fork()))
 		{
-			pid = fork();
-			while (pid == 0)
-			{
-				execlp("afplay", "-q", "sound/ftstp.mp3", 0);
-				exit (0);
-			}
+			execlp("afplay", "-q", "sound/ftstp.mp3", 0);
+			exit (0);
 		}
-		d->vwan.y = fmod(d->vwan.y + d->teta + M_PI, 2.0 * M_PI) - M_PI;
-		if (d->param == 1)
-		{
-			d->plrc.z -= d->jump_v;
-			if (d->jump_v > -JUMP_IMP + GRAV_C / 2)
-				d->jump_v -= GRAV_C;
-			else
-			{
-				d->jump_v = 0;
-				d->param = 0;
-				system("afplay sound/land.mp3 &");
-			}			
-		}
-		if (d->vwan.x + (d->plrc.z - YS / 2) * ANIY + d->phi < M_PI / 3.0
-			&& d->vwan.x + d->phi > -M_PI / 3.0)
-			d->vwan.x += d->phi;
-		if (d->img[0][(int)(d->plrc.y - (d->oz.y + 10 * SIGN(d->oz.y)) * SIGN(sin(d->vwan.y))) / GR_S]
-			[(int)(d->plrc.x) / GR_S].z <= 0)
-			d->plrc.y -= d->oz.y * sin(d->vwan.y);
-		if (d->img[0][(int)(d->plrc.y) / GR_S]
-			[(int)(d->plrc.x + (d->oz.x + 10 * SIGN(d->oz.y)) * SIGN(cos(d->vwan.y))) / GR_S].z <= 0)
-			d->plrc.x += d->oz.y * cos(d->vwan.y);
-		// clock_t start = clock();
 		ft_drawit(d);
 		// clock_t end = clock();
 		// float seconds = (float)(end - start) / CLOCKS_PER_SEC;

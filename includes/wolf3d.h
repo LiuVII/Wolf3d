@@ -26,7 +26,9 @@
 # define JUMP_IMP (((int)sqrt(GRAV_C * YS / 2.0) / GRAV_C) * GRAV_C)
 # define TEXT_S GR_S
 
+void			jump(t_data *d);
 int				draw_win(t_data *d);
 void			draw_3dmap(t_data *d, t_3d p1, double dist, double nesw);
+void			draw_line_im(t_data *d, t_3d p1, t_3d p2, t_img img);
 
 #endif

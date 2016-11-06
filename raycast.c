@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "wolf3d.h"
+
 double	raytrace_vert(t_data *d, double ang, double *nesw, double dist)
 {
 	double	y;
@@ -95,6 +97,20 @@ void	raycast_map(t_data *d)
 
 int		ft_drawit(t_data *d)
 {
+	mlx_hook(d->win, 4, 1, ft_mouse_down, d);
+	mlx_hook(d->win, 6, 1, ft_mouse_move, d);
+	mlx_hook(d->win, 5, 1, ft_mouse_up, d);
+	(d->param == 1) ? jump(d) : 0;
+	d->vwan.y = fmod(d->vwan.y + d->teta + M_PI, 2.0 * M_PI) - M_PI;
+	if (d->vwan.x + (d->plrc.z - YS / 2) * ANIY + d->phi < M_PI / 3.0
+		&& d->vwan.x + d->phi > -M_PI / 3.0)
+		d->vwan.x += d->phi;
+	if (d->img[0][(int)(d->plrc.y - (d->oz.y + 10 * SIGN(d->oz.y)) * SIGN(sin(d->vwan.y))) / GR_S]
+		[(int)(d->plrc.x) / GR_S].z <= 0)
+		d->plrc.y -= d->oz.y * sin(d->vwan.y);
+	if (d->img[0][(int)(d->plrc.y) / GR_S]
+		[(int)(d->plrc.x + (d->oz.x + 10 * SIGN(d->oz.y)) * SIGN(cos(d->vwan.y))) / GR_S].z <= 0)
+		d->plrc.x += d->oz.y * cos(d->vwan.y);
 	d->img_p = mlx_new_image(d->mlx, XS, YS);
 	d->img_p0 = mlx_get_data_addr(d->img_p, &(d->bpp), &(d->ls), &(d->endian));
 	raycast_map(d);
@@ -124,5 +140,6 @@ int		draw_win(t_data *d)
 		(XS - d->youwin.width) / 2, (YS - d->youwin.height) / 2);
 	mlx_destroy_image(d->mlx, d->img_p);
 	d->mevent = 0;
+	d->param = 1;
 	return (0);
 }
