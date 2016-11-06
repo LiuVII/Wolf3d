@@ -96,6 +96,7 @@ typedef struct	s_data
 	t_img		wall;
 	t_img		floor;
 	t_img		sky;
+	t_img		sky1;
 	t_img		youwin;
 	double		phi;
 	double		teta;
@@ -111,6 +112,7 @@ typedef struct	s_data
 	int			run;
 }				t_data;
 
+void			display_controls(void);
 int				ft_key_hook(int keycode, t_data *d);
 int				ft_close(t_data *d);
 int				ft_mouse_move(int x, int y, t_data *d);

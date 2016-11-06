@@ -17,6 +17,7 @@ FUNCS		+=	main.c\
 				ft_read.c\
 				ft_draw.c\
 				process.c\
+				textures.c\
 				raycast.c
 
 OBJS		=	$(addprefix $(OBJS_DIR), $(FUNCS:.c=.o))

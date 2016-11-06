@@ -53,8 +53,8 @@ t_2di	get_txtr_coord(t_data *d, t_3d p1, t_3d *p, t_img img)
 {
 	t_2di	text_p;
 
-	text_p.x = 0;
-	text_p.y = 0;
+	text_p.x = (img.id == 3) ? (int)(p->x) % XS : 0;
+	text_p.y = (img.id == 3) ? (int)(p->y) % YS : 0;
 	if (img.id == 1)
 	{
 		text_p.y = TEXT_S * ((p->y - p1.y) / (p1.x - p1.y));
@@ -64,16 +64,14 @@ t_2di	get_txtr_coord(t_data *d, t_3d p1, t_3d *p, t_img img)
 	}
 	else if (img.id == 0)
 	{
-		p->z = p1.z * (p1.y - PP_CY - (d->vwan.x / ANIY)) /
-		(p->y - PP_CY - (d->vwan.x / ANIY));
+		p->z = p1.z * (1 + (p1.y - p->y) / (p->y - PP_CY - (d->vwan.x / ANIY)));
 		text_p.x = ((int)(d->plrc.x + floor(p->z * cos(d->ang)))) % GR_S;
 		text_p.y = ((int)(d->plrc.y - floor(p->z * sin(d->ang)))) % GR_S;
 	}
 	else if (img.id == 2)
 	{
-		text_p.x = (int)(p->x) % ((img.ls * 8) / img.bpp);
-		text_p.y = (int)(p->y) % YS;
-		p->z = 0;
+		text_p.x = (fmod(d->ang, M_PI) / M_PI) * img.width;
+		text_p.y = (((p->y - YS / 2) * ANIY - d->vwan.x) / M_PI + 0.5) * img.height;
 	}
 	return (text_p);
 }
@@ -123,7 +121,8 @@ void	draw_3dmap(t_data *d, t_3d p1, double dist, double nesw)
 		draw_line_im(d, p1, p2, d->wall);
 	}
 	p1.y = 0;
-	(p2.y > p1.y) ? draw_line_im(d, p1, p2, d->sky) : 0;
+	(p2.y > p1.y && d->ang < M_PI) ? draw_line_im(d, p1, p2, d->sky) : 0;
+	(p2.y > p1.y && d->ang >= M_PI) ? draw_line_im(d, p1, p2, d->sky1) : 0;
 	p1.y = PP_CY + (h * (1 - d->plrc.z / YS)) + (d->vwan.x / ANIY);
 	p2.y = YS;
 	if (p1.y < p2.y)

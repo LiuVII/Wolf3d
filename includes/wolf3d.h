@@ -30,5 +30,7 @@ void			jump(t_data *d);
 int				draw_win(t_data *d);
 void			draw_3dmap(t_data *d, t_3d p1, double dist, double nesw);
 void			draw_line_im(t_data *d, t_3d p1, t_3d p2, t_img img);
+void			load_txtr(t_data *d);
+void			destroy_txtr(t_data *d);
 
 #endif

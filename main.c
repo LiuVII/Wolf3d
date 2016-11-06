@@ -16,27 +16,8 @@
 #include <signal.h>
 #include <sys/wait.h>
 
-int		ft_displayit(t_data *d/*, int flag*/)
+int		ft_displayit(t_data *d)
 {
-// 	ft_putstr("\
-// ____________________________________\n\
-// PARAMETERS:\n\
-// Mandelbrot Set : 1\n\
-// Julia Set      : 2\n\
-// Newton Set (mode root or mode iter):\n\
-// 	z^3-1      : 30 OR 31\n\
-// 	cosh(z)-1  : 40 OR 41\n\
-// 	sin(z)     : 50 OR 51\n\n\
-// CONTROLS:\n\
-// Translation:\n\
-// 	Y: Key: UP, DOWN\n\
-// 	X: Key: LEFT, RIGHT\n\n\
-// Zoom:\n\
-// 	IN-OUT : mouse scroll\n\n\
-// Center:\n\
-// 	Mouse click: Btn 2\n\
-// ____________________________________\n");
-	// (flag == 0) ? ft_free_n_exit(d, NULL, NULL, -1) : 0;
 	static pid_t pid = -1;
 	int wstatus;
 
@@ -53,9 +34,6 @@ int		ft_displayit(t_data *d/*, int flag*/)
 			exit (0);
 		}
 		ft_drawit(d);
-		// clock_t end = clock();
-		// float seconds = (float)(end - start) / CLOCKS_PER_SEC;
-		// printf("angle %.2f seconds %.2f \n", d->vwan.y, seconds);
 	}
 	if (pid != -1 && (d->mevent == 0 || d->param == 1))
 	{
@@ -63,7 +41,6 @@ int		ft_displayit(t_data *d/*, int flag*/)
 		kill(pid, SIGKILL);
 		pid = -1;
 	}
-	// mlx_loop(d->mlx);
 	return (0);
 }
 
@@ -90,6 +67,7 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 	int i;
 	int j;
 
+	destroy_txtr(d);
 	(d && d->mlx && d->win) ? mlx_destroy_window(d->mlx, d->win) : 0;
 	i = -1;
 	if (d && d->img)
@@ -102,6 +80,7 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 		}
 		free(d->img);
 	}
+	
 	(d && d->mlx) ? free(d->mlx) : 0;
 	(d) ? free(d) : 0;
 	(img_l && *img_l) ? ft_lstclr(img_l) : 0;
@@ -121,7 +100,12 @@ void	data_init(t_data *d, char *map_name)
 	d->min_dist = PP_SCL;
 	d->phi = 0;
 	d->teta = 0;
-	if (ft_strcmp(map_name, "maps/01") == 0)
+	if (ft_strcmp(map_name, "maps/0") == 0)
+	{
+		d->plrc.x = 0 + GR_S / 2;
+		d->plrc.y = 0 + GR_S / 2;
+	}
+	if (ft_strcmp(map_name, "maps/1") == 0)
 	{
 		d->plrc.x = GR_S + GR_S / 2;
 		d->plrc.y = 2 * GR_S + GR_S / 2;
@@ -135,18 +119,7 @@ void	data_init(t_data *d, char *map_name)
 	d->plrc.z = PP_CY;
 	d->vwan.y = M_PI / 4;
 	d->vwan.x = 0;
-	(d->wall).ptr= mlx_xpm_file_to_image(d->mlx, "textures/wl_da.xpm", &(d->wall.width), &(d->wall.height));
-	(d->wall).inf = mlx_get_data_addr((d->wall).ptr, &((d->wall).bpp), &((d->wall).ls), &((d->wall).endian));
-	(d->floor).ptr= mlx_xpm_file_to_image(d->mlx, "textures/flr_wd.xpm", &(d->floor.width), &(d->floor.height));
-	(d->floor).inf = mlx_get_data_addr((d->floor).ptr, &((d->floor).bpp), &((d->floor).ls), &((d->floor).endian));
-	(d->sky).ptr= mlx_xpm_file_to_image(d->mlx, "textures/sky.xpm", &(d->sky.width), &(d->sky.height));
-	(d->sky).inf = mlx_get_data_addr((d->sky).ptr, &((d->sky).bpp), &((d->sky).ls), &((d->sky).endian));
-	(d->youwin).ptr= mlx_xpm_file_to_image(d->mlx, "textures/youwin.xpm", &(d->youwin.width), &(d->youwin.height));
-	(d->youwin).inf = mlx_get_data_addr((d->youwin).ptr, &((d->youwin).bpp), &((d->youwin).ls), &((d->youwin).endian));
-	d->wall.id = 1;
-	d->floor.id = 0;
-	d->sky.id = 2;
-	d->youwin.id = 2;
+	load_txtr(d);
 }
 
 int		main(int argc, char **argv)
@@ -170,6 +143,7 @@ int		main(int argc, char **argv)
 		ft_free_n_exit(d, NULL, NULL, -3);
 	data_init(d, argv[1]);
 	ft_read(argv[1], d);
+	display_controls();
 	// x = fork();
 	// if (x < 0)
 	// 	ft_free_n_exit(d, NULL, NULL, -2);
