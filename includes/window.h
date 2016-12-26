@@ -18,7 +18,6 @@
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/uio.h>
-# include <fcntl.h>
 # include <math.h>
 
 # define XS 800
@@ -40,6 +39,12 @@
 # define KEY_E 14
 # define KEY_I 34
 # define KEY_C 8
+# define KEY_R 15
+# define KEY_W 13
+# define KEY_A 0
+# define KEY_S 1
+# define KEY_D 2
+# define KEY_LSHFT 257
 # define KEY_SPACE 49
 # define SIGN(x) ((x < 0.0) ? -1.0 : 1.0)
 # define ABS(x) ((x) * SIGN(x))
@@ -113,6 +118,8 @@ typedef struct	s_data
 }				t_data;
 
 void			display_controls(void);
+int				ft_key_down(int keycode, t_data *d);
+int				ft_key_up(int keycode, t_data *d);
 int				ft_key_hook(int keycode, t_data *d);
 int				ft_close(t_data *d);
 int				ft_mouse_move(int x, int y, t_data *d);

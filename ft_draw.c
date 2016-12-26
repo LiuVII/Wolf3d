@@ -71,7 +71,8 @@ t_2di	get_txtr_coord(t_data *d, t_3d p1, t_3d *p, t_img img)
 	else if (img.id == 2)
 	{
 		text_p.x = (fmod(d->ang, M_PI) / M_PI) * img.width;
-		text_p.y = (((p->y - YS / 2) * ANIY - d->vwan.x) / M_PI + 0.5) * img.height;
+		text_p.y = (((p->y - YS / 2) * ANIY - d->vwan.x)
+			/ M_PI + 0.5) * img.height;
 	}
 	return (text_p);
 }

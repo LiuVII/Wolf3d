@@ -66,7 +66,7 @@ double	raytrace(t_data *d, double ang, double *nesw, double dist)
 	}
 	return (raytrace_vert(d, ang, nesw, dist));
 }
-#include <stdio.h>
+
 void	raycast_map(t_data *d)
 {
 	double	dist;
@@ -75,14 +75,11 @@ void	raycast_map(t_data *d)
 	double	nesw;
 
 	p1.x = -1;
-	// printf("\n%.2f\n", fmod(d->vwan.y, 2.0 * M_PI) + ((d->vwan.y < 0) ? (2.0 * M_PI) : 0));
 	while (++p1.x < XS)
 	{
 		nesw = 0;
 		d->ang = (double)(XS / 2 - p1.x) * ANIX + d->vwan.y;
 		d->ang = fmod(d->ang, 2.0 * M_PI) + ((d->ang < 0) ? (2.0 * M_PI) : 0);
-		// printf(" %.2f |", d->ang);
-		// printf(" %.2f ||",(d->ang / (2.0 * M_PI)) * d->sky.width);
 		dist = raytrace(d, d->ang, &nesw, -1);
 		if (!nesw && (p2.y = -1))
 		{
@@ -100,19 +97,19 @@ void	raycast_map(t_data *d)
 
 int		ft_drawit(t_data *d)
 {
-	mlx_hook(d->win, 4, 1, ft_mouse_down, d);
+	float	shift;
+
 	mlx_hook(d->win, 6, 1, ft_mouse_move, d);
-	mlx_hook(d->win, 5, 1, ft_mouse_up, d);
 	(d->param == 1) ? jump(d) : 0;
 	if (d->vwan.x + (d->plrc.z - YS / 2) * ANIY + d->phi < M_PI / 3.0
 		&& d->vwan.x + d->phi > -M_PI / 3.0)
 		d->vwan.x += d->phi;
 	d->vwan.y = fmod(d->vwan.y + d->teta + M_PI, 2.0 * M_PI) - M_PI;
-	if (d->img[0][(int)(d->plrc.y - (d->oz.y + 10 * SIGN(d->oz.y)) * SIGN(sin(d->vwan.y))) / GR_S]
-		[(int)(d->plrc.x) / GR_S].z <= 0)
+	shift = d->plrc.y - (d->oz.y + 10 * SIGN(d->oz.y)) * sin(d->vwan.y);
+	if (d->img[0][(int)(shift) / GR_S][(int)(d->plrc.x) / GR_S].z <= 0)
 		d->plrc.y -= d->oz.y * sin(d->vwan.y);
-	if (d->img[0][(int)(d->plrc.y) / GR_S]
-		[(int)(d->plrc.x + (d->oz.x + 10 * SIGN(d->oz.y)) * SIGN(cos(d->vwan.y))) / GR_S].z <= 0)
+	shift = d->plrc.x + (d->oz.y + 10 * SIGN(d->oz.y)) * cos(d->vwan.y);
+	if (d->img[0][(int)(d->plrc.y) / GR_S][(int)(shift) / GR_S].z <= 0)
 		d->plrc.x += d->oz.y * cos(d->vwan.y);
 	d->img_p = mlx_new_image(d->mlx, XS, YS);
 	d->img_p0 = mlx_get_data_addr(d->img_p, &(d->bpp), &(d->ls), &(d->endian));
