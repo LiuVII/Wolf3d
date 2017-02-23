@@ -36,9 +36,13 @@ INC_DIR 	=	./includes/
 CC			=	gcc
 FLAGS		=	-Wall -Werror -Wextra
 
+ifdef ALLOCWRAP
+	LDFLAGS += ./alloc_wrap.c -ldl
+endif
+
 .PHONY: all clean flcean $(NAME) re 
 
-all: $(LIB) $(MLX) $(NAME)
+all: $(NAME)
 
 build:
 	@mkdir -p $(OBJS_DIR)
@@ -52,8 +56,8 @@ $(LIB):
 $(MLX):
 	@make -C ./minilibx
 
-$(NAME): $(OBJS)
-	@$(CC) -o $(NAME) $(OBJS) $(LIBLINK) $(MLXLINK) 
+$(NAME): $(LIB) $(MLX) $(OBJS)
+	@$(CC) $(FKAGS) $(LDFLAGS) -o $(NAME) $(OBJS) $(LIBLINK) $(MLXLINK) 
 
 clean:
 	@/bin/rm -rf $(OBJS_DIR)
@@ -62,6 +66,14 @@ clean:
 	@/bin/rm -f *.out
 	@/bin/rm -f ._*
 	@/bin/rm -f .DS*
+	@/bin/rm -f ./includes/._*
+	@/bin/rm -f ./includes/.DS*
+	@/bin/rm -f ./textures/._*
+	@/bin/rm -f ./textures/.DS*
+	@/bin/rm -f ./sound/._*
+	@/bin/rm -f ./sound/.DS*
+	@/bin/rm -f ./music/._*
+	@/bin/rm -f ./music/.DS*
 
 fclean: clean
 	@/bin/rm -f $(NAME)
