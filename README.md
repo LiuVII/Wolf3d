@@ -35,7 +35,7 @@ wolfenstein like movement (W,A,S,D), as well as mouse sides and up-down rotation
 and jumps (space) and runs (left shift).
 
 One of the sceneries you can observe in wolf3d:
-![alt tag](https://github.com/LiuVII/Wolf3d/wolf3d_in_the_sky.png)
+![alt tag](wolf3d_in_the_sky.png)
 
 Sounds and music forked and run in afplayer.
 
