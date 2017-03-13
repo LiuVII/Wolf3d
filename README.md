@@ -14,9 +14,9 @@ Current version runs only on iMac systems (due to minilibx and it's Makefile bui
 
 ### Installation
 
-To compile run this command in your terminal (while in the folder):
+To compile run make command in your terminal (while in the folder):
 ```
-make all
+make
 ```
 
 After that simply run ./wolf3d with an argument that takes a path to a map file:
